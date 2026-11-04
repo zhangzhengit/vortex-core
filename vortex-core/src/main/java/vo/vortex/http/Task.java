@@ -108,8 +108,9 @@ public class Task {
 
 		try {
 
-			final ZRMethod zrMethod = ZConnectionTL.get().getPd().getZrMethod();
-			final Object[] parameters = generateParameters(request, request.getPath(), zrMethod);
+			final PD pd = ZConnectionTL.get().getPd();
+			final ZRMethod zrMethod = pd.getZrMethod();
+			final Object[] parameters = generateParameters(request, request.getPath(), zrMethod, pd);
 
 			final Object zController = ZControllerMap.getObjectByMethod(zrMethod.getMethod());
 			return invokeAndResponse(zrMethod, parameters, zController, request);
@@ -127,16 +128,17 @@ public class Task {
 	 * @param methodNameBytes
 	 * @param path
 	 * @param pathBytes TODO
+	 * @param pd TODO
 	 * @return
 	 */
-	public static ZRMethod matchWithServerMethod(final byte[] methodNameBytes, final String path, final byte[] pathBytes) {
+	public static ZRMethod matchWithServerMethod(final byte[] methodNameBytes, final String path, final byte[] pathBytes, final PD pd) {
 
 		final MethodEnum[] es = MethodEnum.values();
 		for (final MethodEnum methodEnum : es) {
 			final byte[] meNameBytes = methodEnum.getMethodBytes();
 			final boolean methodSupportBytes = HttpRequestProcessor.methodSupportBytes(meNameBytes);
 			if (methodSupportBytes && !Arrays.equals(meNameBytes, methodNameBytes)) {
-				final ZRMethod methodT = ZControllerMap.getMethodByMethodEnumAndPath(meNameBytes, pathBytes);
+				final ZRMethod methodT = ZControllerMap.getMethodByMethodEnumAndPath(meNameBytes, pathBytes, pd);
 				if (methodT != null) {
 					return methodT;
 				}
@@ -572,7 +574,7 @@ public class Task {
 	private static Object[] generateParameters0(
 			final ZRequest request,
 			final String path,
-			final ZRMethod zrMethod)
+			final ZRMethod zrMethod, final PD pd)
 					throws Exception {
 
 		final Object[] parameters = new Object[zrMethod.getMethodParameterSize()];
@@ -614,7 +616,7 @@ public class Task {
 			if (zrMethod.isAnnotationPresent(p, ZPathVariable.class)) {
 				final Class<?> type = pType;
 				// FIXME 2023年11月8日 下午4:39:18 zhanghen: @ZRM 启动校验是否此类型
-				final List<Object> list = zrMethod.getSp().getVList();
+				final List<Object> list = pd.getSp().getVList();
 				final Object v = list.get(zpvPI);
 				try {
 					Task.setZPathVariableValue(parameters, pI, type, v);
@@ -1014,14 +1016,14 @@ public class Task {
 		return nI.get();
 	}
 
-	private static Object[] generateParameters(final ZRequest request, final String path, final ZRMethod zrMethod)
+	private static Object[] generateParameters(final ZRequest request, final String path, final ZRMethod zrMethod, final PD pd)
 			throws Exception {
 
 		if (zrMethod.getMethodParameterSize() <= 0) {
 			return EMPTY_OBJECT_ARRAY;
 		}
 
-		return Task.generateParameters0(request, path, zrMethod);
+		return Task.generateParameters0(request, path, zrMethod, pd);
 	}
 
 	private static ZResponse setZRequestAndZResponse(final ZRequest request, final Object[] parameterArray) {

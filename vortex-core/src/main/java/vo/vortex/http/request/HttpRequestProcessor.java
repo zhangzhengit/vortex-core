@@ -167,7 +167,7 @@ public class HttpRequestProcessor {
 		final byte[] pathBytes = ZRequest.parsePATHBytes(requestURIBytes);
 
 		// 1、精确匹配
-		final ZRMethod zrMethod = ZControllerMap.getMethodByMethodEnumAndPath(pd.getMethodNameBytes(), pathBytes);
+		final ZRMethod zrMethod = ZControllerMap.getMethodByMethodEnumAndPath(pd.getMethodNameBytes(), pathBytes, pd);
 		if (zrMethod != null) {
 			// 精确匹配到了
 			pd.setZrMethod(zrMethod);
@@ -180,7 +180,7 @@ public class HttpRequestProcessor {
 		if (matcheZRMethod == null) {
 
 			// 3、继续URI正则匹配，依然没匹配到，但用非请求的METHOD和URI精确匹配到了，响应405
-			final ZRMethod matchWithServerMethod = Task.matchWithServerMethod(pd.getMethodNameBytes(), path, pathBytes);
+			final ZRMethod matchWithServerMethod = Task.matchWithServerMethod(pd.getMethodNameBytes(), path, pathBytes, pd);
 			if (matchWithServerMethod != null) {
 				final ZResponse response405 = ReU.response405(new String(pd.getMethodNameBytes()), false);
 				pd.setException(response405);

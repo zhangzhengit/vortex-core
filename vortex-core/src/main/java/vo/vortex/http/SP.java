@@ -3,7 +3,7 @@ package vo.vortex.http;
 import java.util.ArrayList;
 
 /**
- *
+ * 解析请求路径中的 @ZPathVariable 的值
  *
  * @author zhangzhen
  * @date 2026年6月20日 07:04:39

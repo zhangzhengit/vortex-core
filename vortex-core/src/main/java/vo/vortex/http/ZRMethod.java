@@ -105,8 +105,6 @@ public class ZRMethod {
 
 	private final ZRequestMapping zRequestMapping;
 
-	private SP sp;
-
 	private final String httpMethod;
 
 	/**
@@ -391,14 +389,6 @@ public class ZRMethod {
 
 	public int getMethodParameterSize() {
 		return this.methodParameterSize;
-	}
-
-	public SP getSp() {
-		return this.sp;
-	}
-
-	public void setSp(final SP sp) {
-		this.sp = sp;
 	}
 
 	public String getHttpMethod() {

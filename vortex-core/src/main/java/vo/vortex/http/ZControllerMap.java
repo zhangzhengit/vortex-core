@@ -126,7 +126,7 @@ public class ZControllerMap {
 		return objectMap.get(method);
 	}
 
-	public static ZRMethod getMethodByMethodEnumAndPath(final byte[] methodNameBytes, final byte[] pathBytes) {
+	public static ZRMethod getMethodByMethodEnumAndPath(final byte[] methodNameBytes, final byte[] pathBytes, final PD pd) {
 
 
 		final ByteArrayKeyWrapper methodNameWrapper = new ByteArrayKeyWrapper(methodNameBytes);
@@ -146,7 +146,7 @@ public class ZControllerMap {
 		}
 
 		final ZRMethod zrMethod = methodPathTable.get(methodNameWrapper, (ByteArrayKeyWrapper) r[0]);
-		zrMethod.setSp((SP) r[1]);
+		pd.setSp((SP) r[1]);
 
 		return zrMethod;
 	}

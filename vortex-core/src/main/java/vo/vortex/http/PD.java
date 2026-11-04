@@ -48,6 +48,7 @@ public class PD {
 	private ZResponse exception;
 
 	private HttpParseStatusEnum parseStatusEnum;
+	private SP sp;
 
 	public int getRequestLineEndIndex() {
 		return this.requestLineEndIndex;
@@ -159,6 +160,14 @@ public class PD {
 
 	public void setRequestURIBytes(final byte[] requestURIBytes) {
 		this.requestURIBytes = requestURIBytes;
+	}
+
+	public SP getSp() {
+		return this.sp;
+	}
+
+	public void setSp(final SP sp) {
+		this.sp = sp;
 	}
 
 }
