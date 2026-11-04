@@ -209,7 +209,7 @@ public class Task {
 
 	private static ZResponse invokeAndResponse0(final ZRMethod zrMethod, final Object[] parameters,
 			final Object zControllerObject, final ZRequest request, final ZResponse response) throws Throwable {
-		final List<ZHandlerInterceptor> hiList = ZHandlerInterceptorScanner.match(request.getRequestURI());
+		final List<ZHandlerInterceptor> hiList = ZHandlerInterceptorScanner.match(zrMethod.getMapping());
 
 		final Object r = CU.isEmpty(hiList)
 				? invoke0(request.getPath(), zControllerObject, zrMethod, parameters)

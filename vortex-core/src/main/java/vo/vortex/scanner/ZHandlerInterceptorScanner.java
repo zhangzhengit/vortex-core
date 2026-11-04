@@ -3,6 +3,7 @@ package vo.vortex.scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import vo.vortex.anno.ZOrder;
-import vo.vortex.cache.ZRC;
 import vo.vortex.common.CU;
 import vo.vortex.core.ZApplicationStartupInfo;
 import vo.vortex.core.ZContext;
@@ -32,7 +32,7 @@ public class ZHandlerInterceptorScanner {
 	 */
 	private static final ConcurrentMap<String, List<ZHandlerInterceptor>> hicmap = new ConcurrentHashMap<>();
 
-	private static final List<ZHandlerInterceptor> BEAN_LIST = new ArrayList<>();
+	private static final List<ZHandlerInterceptor> HandlerInterceptor_LIST = new ArrayList<>();
 
 	/**
 	 * 扫描 ZHandlerInterceptor 的实现类
@@ -49,9 +49,7 @@ public class ZHandlerInterceptorScanner {
 			final Optional<Class<?>> findAny = Arrays.stream(bean.getClass().getInterfaces())
 					.filter(i -> i.equals(ZHandlerInterceptor.class)).findAny();
 			if (findAny.isPresent()) {
-				BEAN_LIST.add((ZHandlerInterceptor) bean);
-
-				final ZHandlerInterceptor zhi = (ZHandlerInterceptor) bean;
+				HandlerInterceptor_LIST.add((ZHandlerInterceptor) bean);
 
 				final boolean annotationPresent = bean.getClass().isAnnotationPresent(ZOrder.class);
 				if (!annotationPresent) {
@@ -78,33 +76,39 @@ public class ZHandlerInterceptorScanner {
 	 *
 	 */
 	public static List<ZHandlerInterceptor> get() {
-		return BEAN_LIST;
+		return HandlerInterceptor_LIST;
 	}
 
 	/**
 	 * 返回匹配请求路径的拦截器，已经按从前到后的执行顺序排序了
 	 *
-	 * @param requestURI 请求路径,如：/index、/user/1
+	 * @param zrMethodMapping requestURI对应的ZRMethod的mapping值
+	 *
 	 * @return
 	 *
 	 */
-	public static List<ZHandlerInterceptor> match(final String requestURI) {
-		return hicmap.computeIfAbsent(requestURI, ZHandlerInterceptorScanner::match0);
+	public static List<ZHandlerInterceptor> match(final String zrMethodMapping) {
+		return hicmap.computeIfAbsent(zrMethodMapping, ZHandlerInterceptorScanner::match0);
 	}
 
 	private static List<ZHandlerInterceptor> match0(final String requestURI) {
+
+		final List<ZHandlerInterceptor> hiList = get();
+
+		if (CU.isEmpty(hiList)) {
+			return Collections.emptyList();
+		}
+
+
 		final List<ZHandlerInterceptor> zhiRList = new ArrayList<>();
 
-		final List<ZHandlerInterceptor> list = get();
-		if (CU.isNotEmpty(list)) {
-			for (final ZHandlerInterceptor zhi : list) {
-				final String[] interceptionPath = zhi.interceptionPathRegex();
-				for (final String reg : interceptionPath) {
-					final Pattern pattern = Pattern.compile(reg);
-					final Matcher matcher = pattern.matcher(requestURI);
-					if (matcher.matches()) {
-						zhiRList.add(zhi);
-					}
+		for (final ZHandlerInterceptor zhi : hiList) {
+			final String[] interceptionPath = zhi.interceptionPathRegex();
+			for (final String reg : interceptionPath) {
+				final Pattern pattern = Pattern.compile(reg);
+				final Matcher matcher = pattern.matcher(requestURI);
+				if (matcher.matches()) {
+					zhiRList.add(zhi);
 				}
 			}
 		}

@@ -39,6 +39,11 @@ public class ZRMethod {
 	 */
 	private final Method method;
 
+	/**
+	 * mapping值，如：/index
+	 */
+	private final String mapping;
+
 	private final Parameter[] methodParameters;
 	/**
 	 * <方法参数,此参数上的注解>
@@ -109,12 +114,14 @@ public class ZRMethod {
 
 	/**
 	 * @param method
+	 * @param mapping TODO
 	 * @param ctEnum
 	 * @param zcObject
 	 */
-	public ZRMethod(final Method method, final CTEnum ctEnum, final Object zcObject) {
+	public ZRMethod(final Method method, final String mapping, final CTEnum ctEnum, final Object zcObject) {
 
 		this.method = method;
+		this.mapping = mapping;
 
 		this.methodParameters = method.getParameters();
 
@@ -393,6 +400,10 @@ public class ZRMethod {
 
 	public String getHttpMethod() {
 		return this.httpMethod;
+	}
+
+	public String getMapping() {
+		return this.mapping;
 	}
 
 }

@@ -73,7 +73,8 @@ public class ZControllerMap {
 		final ByteArrayKeyWrapper methodWrapper = new ByteArrayKeyWrapper(methodEnum.name().getBytes());
 		final ByteArrayKeyWrapper mappingWrapper = new ByteArrayKeyWrapper(mapping.getBytes());
 
-		methodPathTable.put(methodWrapper, mappingWrapper, new ZRMethod(method, cte, zcObject));
+		final ZRMethod zrm = new ZRMethod(method, mapping, cte, zcObject);
+		methodPathTable.put(methodWrapper, mappingWrapper, zrm);
 
 		methodIsregexTable.put(method, mappingWrapper, isRegex);
 
