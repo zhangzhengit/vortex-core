@@ -337,7 +337,7 @@ public class ZResponse {
 					break;
 				}
 				if (Arrays.equals(h.getNameBytes(), zHeader.getNameBytes())) {
-					this.headerList.set(i, h);
+					this.headerList.set(i, zHeader);
 					equals = true;
 					break;
 				}
