@@ -166,7 +166,12 @@ public class Task {
 			return null;
 		};
 
-		final String key = "gmm-" + path;
+		// FIXME 2026年11月14日 10:29:03 zhangzhen : 下面key有bug，没带METHOD
+		// 现有的method是byte[]，要尽量避免转为String并且保证不冲突，Arrays.hashCode貌似不行
+		// 因为http协议中method允许自定义，很可能冲突。但现在在配置中写死了支持哪些METHOD，
+		// 那就先这样用Arrays.hashcode
+		final int mnh = Arrays.hashCode(methodNameBytes);
+		final String key = "gmm-" + mnh + path;
 		return ZRC.singleton().computeIfAbsent(key, supplier, true);
 	}
 
