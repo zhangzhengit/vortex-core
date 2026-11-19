@@ -40,11 +40,8 @@ import vo.vortex.http.ZSessionMap;
 // 则活跃一下，让存活时间重新计算
 public class ZRequest {
 
-	public static final String KEEP_ALIVE_CAMELCASE = "Keep-Alive";
-	public static final String KEEP_ALIVE_LOWERCASE = ConnectionEnum.KEEP_ALIVE.getValue();
 	public static final String HOST_LOWERCASE = HeaderEnum.HOST.getName().toLowerCase();
 
-	public static final int KEEP_ALIVE_LENGTH = KEEP_ALIVE_CAMELCASE.length();
 	public static final String HTTP_11 = "HTTP/1.1";
 	public static final byte[] HTTP_11_BYTES = HTTP_11.getBytes();
 	public static final String BOUNDARY = "boundary=";
@@ -440,15 +437,29 @@ public class ZRequest {
 		}
 
 		final String connection = this.getHeader(HeaderEnum.CONNECTION.getName());
-		final boolean keepAlive = STU.isNotEmpty(connection)
-				&& (connection.length() == KEEP_ALIVE_LENGTH)
-				&& (KEEP_ALIVE_LOWERCASE.equals(connection)
-			     || KEEP_ALIVE_CAMELCASE.equals(connection)
-			 	 || connection.toLowerCase().contains(KEEP_ALIVE_LOWERCASE)
+		final boolean keepAliveL =
+					// 1.1默认为keep-alive，无此头就是keep-alive
+					STU.isEmpty(connection)
+				 || isKeepAlive(connection);
 
-				);
+		this.keepAlive = keepAliveL ? 1 : 0;
 
-		this.keepAlive = keepAlive ? 1 : 0;
+		return keepAliveL;
+	}
+
+	private static boolean isKeepAlive(final String connection) {
+		final String[] x = connection.split(",");
+		boolean keepAlive = false;
+		for (final String v : x) {
+			final String t = v.trim();
+			if (ConnectionEnum.CLOSE.getValue().equalsIgnoreCase(t)) {
+				return false;
+			}
+
+			if (ConnectionEnum.KEEP_ALIVE.getValue().equalsIgnoreCase(t)) {
+				keepAlive = true;
+			}
+		}
 
 		return keepAlive;
 	}
