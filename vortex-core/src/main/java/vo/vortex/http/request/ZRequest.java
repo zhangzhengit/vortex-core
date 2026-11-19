@@ -411,7 +411,9 @@ public class ZRequest {
 			return null;
 		}
 
-		final String v = this.headerMap.get(name);
+		// FIXME 2026年11月19日 14:45:58 zhangzhen : 记得toLowerCase替换掉
+		final String x = name.toLowerCase();
+		final String v = this.headerMap.get(x);
 		if (isHPNV(v)) {
 			return null;
 		}
@@ -420,7 +422,7 @@ public class ZRequest {
 			return v;
 		}
 
-		final String nV = parseHeaderARHeader(this, name);
+		final String nV = parseHeaderARHeader(this, x);
 		if (isHPNV(nV)) {
 			return null;
 		}
@@ -715,102 +717,102 @@ public class ZRequest {
 
 	private static boolean isTransferEncoding(final int headerNameLength, final byte[] dataRawArray, final int from) {
 		return (headerNameLength == 17)
-				&& (dataRawArray[from] == 'T')
-				&& (dataRawArray[from + 1] == 'r')
-				&& (dataRawArray[from + 2] == 'a')
-				&& (dataRawArray[from + 3] == 'n')
-				&& (dataRawArray[from + 4] == 's')
-				&& (dataRawArray[from + 5] == 'f')
-				&& (dataRawArray[from + 6] == 'e')
-				&& (dataRawArray[from + 7] == 'r')
+				&& ((dataRawArray[from] == 'T') || (dataRawArray[from] == 't'))
+				&& ((dataRawArray[from + 1] == 'r') || (dataRawArray[from + 1] == 'R'))
+				&& ((dataRawArray[from + 2] == 'a') || (dataRawArray[from + 2] == 'A'))
+				&& ((dataRawArray[from + 3] == 'n') || (dataRawArray[from + 3] == 'N'))
+				&& ((dataRawArray[from + 4] == 's') || (dataRawArray[from + 4] == 'S'))
+				&& ((dataRawArray[from + 5] == 'f') || (dataRawArray[from + 5] == 'F'))
+				&& ((dataRawArray[from + 6] == 'e') || (dataRawArray[from + 6] == 'E'))
+				&& ((dataRawArray[from + 7] == 'r') || (dataRawArray[from + 7] == 'R'))
 				&& (dataRawArray[from + 8] == '-')
-				&& (dataRawArray[from + 9] == 'E')
-				&& (dataRawArray[from + 10] == 'n')
-				&& (dataRawArray[from + 11] == 'c')
-				&& (dataRawArray[from + 12] == 'o')
-				&& (dataRawArray[from + 13] == 'd')
-				&& (dataRawArray[from + 14] == 'i')
-				&& (dataRawArray[from + 15] == 'n')
-				&& (dataRawArray[from + 16] == 'g')
+				&& ((dataRawArray[from + 9] == 'E') || (dataRawArray[from + 9] == 'e'))
+				&& ((dataRawArray[from + 10] == 'n') || (dataRawArray[from + 10] == 'N'))
+				&& ((dataRawArray[from + 11] == 'c') || (dataRawArray[from + 11] == 'C'))
+				&& ((dataRawArray[from + 12] == 'o') || (dataRawArray[from + 12] == 'O'))
+				&& ((dataRawArray[from + 13] == 'd') || (dataRawArray[from + 13] == 'D'))
+				&& ((dataRawArray[from + 14] == 'i') || (dataRawArray[from + 14] == 'I'))
+				&& ((dataRawArray[from + 15] == 'n') || (dataRawArray[from + 15] == 'N'))
+				&& ((dataRawArray[from + 16] == 'g') || (dataRawArray[from + 16] == 'G'))
 
 				;
 	}
 
 	private static boolean isContentLength(final int headerNameLength, final byte[] dataRawArray, final int from) {
 		return (headerNameLength == 14)
-				&& (dataRawArray[from] == 'C')
-				&& (dataRawArray[from + 1] == 'o')
-				&& (dataRawArray[from + 2] == 'n')
-				&& (dataRawArray[from + 3] == 't')
-				&& (dataRawArray[from + 4] == 'e')
-				&& (dataRawArray[from + 5] == 'n')
-				&& (dataRawArray[from + 6] == 't')
+				&& ((dataRawArray[from] == 'C') || (dataRawArray[from] == 'c'))
+				&& ((dataRawArray[from + 1] == 'o') || (dataRawArray[from + 1] == 'O'))
+				&& ((dataRawArray[from + 2] == 'n') || (dataRawArray[from + 2] == 'N'))
+				&& ((dataRawArray[from + 3] == 't') || (dataRawArray[from + 3] == 'T'))
+				&& ((dataRawArray[from + 4] == 'e') || (dataRawArray[from + 4] == 'E'))
+				&& ((dataRawArray[from + 5] == 'n') || (dataRawArray[from + 5] == 'N'))
+				&& ((dataRawArray[from + 6] == 't') || (dataRawArray[from + 6] == 'T'))
 				&& (dataRawArray[from + 7] == '-')
-				&& (dataRawArray[from + 8] == 'L')
-				&& (dataRawArray[from + 9] == 'e')
-				&& (dataRawArray[from + 10] == 'n')
-				&& (dataRawArray[from + 11] == 'g')
-				&& (dataRawArray[from + 12] == 't')
-				&& (dataRawArray[from + 13] == 'h')
+				&& ((dataRawArray[from + 8] == 'L') || (dataRawArray[from + 8] == 'l'))
+				&& ((dataRawArray[from + 9] == 'e') || (dataRawArray[from + 9] == 'E'))
+				&& ((dataRawArray[from + 10] == 'n') || (dataRawArray[from + 10] == 'N'))
+				&& ((dataRawArray[from + 11] == 'g') || (dataRawArray[from + 11] == 'G'))
+				&& ((dataRawArray[from + 12] == 't') || (dataRawArray[from + 12] == 'T'))
+				&& ((dataRawArray[from + 13] == 'h') || (dataRawArray[from + 13] == 'H'))
 				;
 	}
 
 	private static boolean isConnection(final int headerNameLength, final byte[] dataRawArray, final int from) {
 		return (headerNameLength == 10)
-				&& (dataRawArray[from] == 'C')
-				&& (dataRawArray[from + 1] == 'o')
-				&& (dataRawArray[from + 2] == 'n')
-				&& (dataRawArray[from + 3] == 'n')
-				&& (dataRawArray[from + 4] == 'e')
-				&& (dataRawArray[from + 5] == 'c')
-				&& (dataRawArray[from + 6] == 't')
-				&& (dataRawArray[from + 7] == 'i')
-				&& (dataRawArray[from + 8] == 'o')
-				&& (dataRawArray[from + 9] == 'n')
+				&& ((dataRawArray[from] == 'C') || (dataRawArray[from] == 'c'))
+				&& ((dataRawArray[from + 1] == 'o') || (dataRawArray[from + 1] == 'O'))
+				&& ((dataRawArray[from + 2] == 'n') || (dataRawArray[from + 2] == 'N'))
+				&& ((dataRawArray[from + 3] == 'n') || (dataRawArray[from + 3] == 'N'))
+				&& ((dataRawArray[from + 4] == 'e') || (dataRawArray[from + 4] == 'E'))
+				&& ((dataRawArray[from + 5] == 'c') || (dataRawArray[from + 5] == 'C'))
+				&& ((dataRawArray[from + 6] == 't') || (dataRawArray[from + 6] == 'T'))
+				&& ((dataRawArray[from + 7] == 'i') || (dataRawArray[from + 7] == 'I'))
+				&& ((dataRawArray[from + 8] == 'o') || (dataRawArray[from + 8] == 'O'))
+				&& ((dataRawArray[from + 9] == 'n') || (dataRawArray[from + 9] == 'N'))
 
 				;
 	}
 
 	private static boolean isUpgrade(final int headerNameLength, final byte[] dataRawArray, final int from) {
 		return (headerNameLength == 7)
-				&& (dataRawArray[from] == 'U')
-				&& (dataRawArray[from + 1] == 'p')
-				&& (dataRawArray[from + 2] == 'g')
-				&& (dataRawArray[from + 3] == 'r')
-				&& (dataRawArray[from + 4] == 'a')
-				&& (dataRawArray[from + 5] == 'd')
-				&& (dataRawArray[from + 6] == 'e')
+				&& ((dataRawArray[from] == 'U') || (dataRawArray[from] == 'u'))
+				&& ((dataRawArray[from + 1] == 'p') || (dataRawArray[from + 1] == 'P'))
+				&& ((dataRawArray[from + 2] == 'g') || (dataRawArray[from + 2] == 'G'))
+				&& ((dataRawArray[from + 3] == 'r') || (dataRawArray[from + 3] == 'R'))
+				&& ((dataRawArray[from + 4] == 'a') || (dataRawArray[from + 4] == 'A'))
+				&& ((dataRawArray[from + 5] == 'd') || (dataRawArray[from + 5] == 'D'))
+				&& ((dataRawArray[from + 6] == 'e') || (dataRawArray[from + 6] == 'E'))
 				;
 	}
 
 	private static boolean isExpect(final int headerNameLength, final byte[] dataRawArray, final int from) {
 		return (headerNameLength == 6)
-				&& (dataRawArray[from] == 'E')
-				&& (dataRawArray[from + 1] == 'x')
-				&& (dataRawArray[from + 2] == 'c')
-				&& (dataRawArray[from + 3] == 'e')
-				&& (dataRawArray[from + 4] == 'p')
-				&& (dataRawArray[from + 5] == 't')
+				&& ((dataRawArray[from] == 'E') || (dataRawArray[from] == 'e'))
+				&& ((dataRawArray[from + 1] == 'x') || (dataRawArray[from + 1] == 'X'))
+				&& ((dataRawArray[from + 2] == 'c') || (dataRawArray[from + 2] == 'C'))
+				&& ((dataRawArray[from + 3] == 'e') || (dataRawArray[from + 3] == 'E'))
+				&& ((dataRawArray[from + 4] == 'p') || (dataRawArray[from + 4] == 'P'))
+				&& ((dataRawArray[from + 5] == 't') || (dataRawArray[from + 5] == 'T'))
 				;
 	}
 
 	private static boolean isHost(final int headerNameLength, final byte[] dataRawArray, final int from) {
 		return (headerNameLength == 4)
-				&& (dataRawArray[from] == 'H')
-				&& (dataRawArray[from + 1] == 'o')
-				&& (dataRawArray[from + 2] == 's')
-				&& (dataRawArray[from + 3] == 't');
+				&& ((dataRawArray[from] == 'H') || (dataRawArray[from] == 'h'))
+				&& ((dataRawArray[from + 1] == 'o') || (dataRawArray[from + 1] == 'O'))
+				&& ((dataRawArray[from + 2] == 's') || (dataRawArray[from + 2] == 'S'))
+				&& ((dataRawArray[from + 3] == 't') || (dataRawArray[from + 3] == 'T'));
 	}
 
 	private static boolean isCookie(final int headerNameLength, final byte[] dataRawArray, final int from) {
 		// 暂时只比较几个字符，不比较整个长度的
 		return (headerNameLength == 6)
-			&& (dataRawArray[from] == 'C')
-			&& (dataRawArray[from + 1] == 'o')
-			&& (dataRawArray[from + 2] == 'o')
-			&& (dataRawArray[from + 3] == 'k')
-			&& (dataRawArray[from + 4] == 'i')
-			&& (dataRawArray[from + 5] == 'e');
+			&& ((dataRawArray[from] == 'C') || (dataRawArray[from] == 'c'))
+			&& ((dataRawArray[from + 1] == 'o') || (dataRawArray[from + 1] == 'O'))
+			&& ((dataRawArray[from + 2] == 'o') || (dataRawArray[from + 2] == 'O'))
+			&& ((dataRawArray[from + 3] == 'k') || (dataRawArray[from + 3] == 'K'))
+			&& ((dataRawArray[from + 4] == 'i') || (dataRawArray[from + 4] == 'I'))
+			&& ((dataRawArray[from + 5] == 'e') || (dataRawArray[from + 5] == 'E'));
 	}
 
 	/**
@@ -841,7 +843,8 @@ public class ZRequest {
 				nameTo--;
 			}
 
-			final String name = new String(request.dataRawArray, arrayRange.getFrom(), nameTo);
+			final String name = AsciiString.toLowerCaseAsciiByte(request.dataRawArray, arrayRange.getFrom(), nameTo);
+
 			if ((headerName.length() == name.length()) && headerName.equals(name)) {
 
 				final String value = gHValue(request.dataRawArray, cI, arrayRange);

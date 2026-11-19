@@ -9,53 +9,53 @@ package vo.vortex.enums;
  */
 public enum HeaderEnum {
 
-	SET_COOKIE("Set-Cookie", "Set-Cookie".getBytes()),
+	SET_COOKIE("set-cookie", "set-cookie".getBytes()),
 
-	CONTENT_ENCODING("Content-Encoding", "Content-Encoding".getBytes()),
+	CONTENT_ENCODING("content-encoding", "content-encoding".getBytes()),
 
-	Z_SESSION_ID("ZSESSIONID", "ZSESSIONID".getBytes()),
+	Z_SESSION_ID("zsessionid", "zsessionid".getBytes()),
 
-	HOST("Host", "Host".getBytes()),
+	HOST("host", "host".getBytes()),
 
-	TRANSFER_ENCODING("Transfer-Encoding", "Transfer-Encoding".getBytes()),
+	TRANSFER_ENCODING("transfer-encoding", "transfer-encoding".getBytes()),
 
-	ACCEPT_ENCODING("Accept-Encoding", "Accept-Encoding".getBytes()),
+	ACCEPT_ENCODING("accept-encoding", "accept-encoding".getBytes()),
 
-	VARY("Vary", "Vary".getBytes()),
+	VARY("vary", "vary".getBytes()),
 
-	COOKIE("Cookie", "Cookie".getBytes()),
+	COOKIE("cookie", "cookie".getBytes()),
 
-	CONTENT_DISPOSITION("Content-Disposition", "Content-Disposition".getBytes()),
+	CONTENT_DISPOSITION("content-disposition", "content-disposition".getBytes()),
 
-	CONTENT_TYPE("Content-Type", "Content-Type".getBytes()),
+	CONTENT_TYPE("content-type", "content-type".getBytes()),
 
-	ALLOW("Allow", "Allow".getBytes()),
+	ALLOW("allow", "allow".getBytes()),
 
-	USER_AGENT("User-Agent", "User-Agent".getBytes()),
+	USER_AGENT("user-agent", "user-agent".getBytes()),
 
-	SERVER("Server", "Server".getBytes()),
+	SERVER("server", "server".getBytes()),
 
-	CONNECTION("Connection", "Connection".getBytes()),
+	CONNECTION("connection", "connection".getBytes()),
 
-	CACHE_CONTROL("Cache-Control", "Cache-Control".getBytes()),
+	CACHE_CONTROL("cache-control", "cache-control".getBytes()),
 
-	LAST_MODIFIED("Last-Modified", "Last-Modified".getBytes()),
+	LAST_MODIFIED("last-modified", "last-modified".getBytes()),
 
-	CONTENT_LENGTH("Content-Length", "Content-Length".getBytes()),
+	CONTENT_LENGTH("content-length", "content-length".getBytes()),
 
-	IF_MODIFIED_SINCE("If-Modified-Since", "If-Modified-Since".getBytes()),
+	IF_MODIFIED_SINCE("if-modified-since", "if-modified-since".getBytes()),
 
-	IF_NONE_MATCH("If-None-Match", "If-None-Match".getBytes()),
+	IF_NONE_MATCH("if-none-match", "if-none-match".getBytes()),
 
-	DATE("Date", "Date".getBytes()),
+	DATE("date", "date".getBytes()),
 
-	ETAG("ETag", "ETag".getBytes()),
+	ETAG("etag", "etag".getBytes()),
 
-	REFERER("Referer", "Referer".getBytes()),
+	REFERER("referer", "referer".getBytes()),
 
-	X_REAL_IP("X-Real-IP", "X-Real-IP".getBytes()),
+	X_REAL_IP("x-real-ip", "x-real-ip".getBytes()),
 
-	X_Forwarded_For("X-Forwarded-For", "X-Forwarded-For".getBytes()),
+	X_Forwarded_For("x-forwarded-for", "x-forwarded-for".getBytes()),
 
 	;
 
