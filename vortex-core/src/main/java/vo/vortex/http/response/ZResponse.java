@@ -446,7 +446,7 @@ public class ZResponse {
 				final String IF_MODIFIED_SINCE = request.getHeader(HeaderEnum.IF_MODIFIED_SINCE.getName());
 				if (IF_MODIFIED_SINCE != null) {
 					final long IF_MODIFIED_SINCE_TIME = ZDateUtil.toTimestampMillis(IF_MODIFIED_SINCE);
-					if (lastModified > IF_MODIFIED_SINCE_TIME) {
+					if (lastModified <= IF_MODIFIED_SINCE_TIME) {
 						this.httpStatus(HttpStatusEnum.HTTP_304.getStatus());
 						r304 = true;
 					}
