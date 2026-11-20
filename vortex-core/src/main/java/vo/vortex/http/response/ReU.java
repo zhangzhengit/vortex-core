@@ -26,8 +26,19 @@ public class ReU {
 							    "\r\n")
 							    .getBytes(StandardCharsets.ISO_8859_1);
 
+	private static final byte[] BAD_REQUEST_RESPONSE =
+			("HTTP/1.1 " + HttpStatusEnum.HTTP_400.getStatus() + " " + HttpStatusEnum.HTTP_400.getMessage() + "\r\n" +
+					"Content-Length: 0\r\n" +
+					"Connection: close\r\n" +
+					"\r\n")
+			.getBytes(StandardCharsets.ISO_8859_1);
+
 	public static byte[] g503Bytes() {
 		return SERVICE_UNAVAILABLE_RESPONSE;
+	}
+
+	public static byte[] g400Bytes() {
+		return BAD_REQUEST_RESPONSE;
 	}
 
 	public static ZResponse response429(final String message, final boolean keepAlive) {

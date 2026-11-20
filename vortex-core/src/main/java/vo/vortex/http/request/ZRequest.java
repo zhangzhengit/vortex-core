@@ -1,7 +1,10 @@
 package vo.vortex.http.request;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -13,6 +16,7 @@ import java.util.UUID;
 
 import vo.vortex.common.AU;
 import vo.vortex.common.BA;
+import vo.vortex.common.BU;
 import vo.vortex.common.CU;
 import vo.vortex.common.STU;
 import vo.vortex.configuration.properties.ServerConfigurationProperties;
@@ -21,6 +25,7 @@ import vo.vortex.enums.AcceptEncodingEnum;
 import vo.vortex.enums.ConnectionEnum;
 import vo.vortex.enums.HeaderEnum;
 import vo.vortex.http.ArrayRange;
+import vo.vortex.http.PD;
 import vo.vortex.http.TF;
 import vo.vortex.http.Task;
 import vo.vortex.http.ZConnectionTL;
@@ -28,6 +33,7 @@ import vo.vortex.http.ZCookie;
 import vo.vortex.http.ZServer;
 import vo.vortex.http.ZSession;
 import vo.vortex.http.ZSessionMap;
+import vo.vortex.http.response.ReU;
 
 /**
  * 表示http 的请求信息
@@ -643,9 +649,9 @@ public class ZRequest {
 		for (int i = 1, size = x.size(), parsedCount = 0;
 				(i < size) && (parsedCount < parseHeader_requiredHeaderCount); i++) {
 
-			final ArrayRange arrarRange = x.get(i);
+			final ArrayRange arrayRange = x.get(i);
 
-			final int cI = AU.indexOfKeyword(request.dataRawArray,arrarRange.getFrom(), STU.COLON_C_BYTE);
+			final int cI = AU.indexOfKeyword(request.dataRawArray,arrayRange.getFrom(), STU.COLON_C_BYTE);
 
 			if (cI <= -1) {
 				// FIXME 2026年6月11日 19:45:28 zhangzhen : 头无:符号，应该需要400
@@ -653,29 +659,59 @@ public class ZRequest {
 			}
 
 			// 此时的ba已经去除了前后的空格了,现在只需要去除:符号旁边的空格
-			int nT = (cI - arrarRange.getFrom());
+			int nT = (cI - arrayRange.getFrom());
 			int nTrimSize = 0;
 			while ((nT > 0) && (request.dataRawArray[cI] == STU.SPACE_BYTE)) {
 				nT--;
 				nTrimSize++;
 			}
 
-			final int headerNameLength = cI - arrarRange.getFrom() - nTrimSize;
+			final int headerNameLength = cI - arrayRange.getFrom() - nTrimSize;
 
-			final String name = gHName(headerNameLength, request.dataRawArray, arrarRange.getFrom());
+			if (!isTChar(request.dataRawArray, arrayRange.getFrom(), headerNameLength)) {
+				response400AndCloseSocketIfNotTChar();
+				return;
+			}
+
+			final String name = gHName(headerNameLength, request.dataRawArray, arrayRange.getFrom());
 			if (name != null) {
 
-				final String value = gHValue(request.dataRawArray, cI, arrarRange);
+				final String value = gHValue(request.dataRawArray, cI, arrayRange);
 
 				request.headerMap.put(name, value);
 
-				arrarRange.setParsed(true);
+				arrayRange.setParsed(true);
 
 				parsedCount++;
 			}
 
 		}
 
+	}
+
+	private static void response400AndCloseSocketIfNotTChar() {
+		final PD pd = ZConnectionTL.get().getPd();
+		final Socket socket = pd.getSocket();
+
+		try (OutputStream outputStream = socket.getOutputStream()) {
+			outputStream.write(ReU.g400Bytes());
+			outputStream.flush();
+		} catch (final IOException ingore) {
+			// ingore
+		} finally {
+			try {
+				socket.close();
+			} catch (final IOException ingore) {
+				// ingore
+			}
+		}
+	}
+
+	private static boolean isTChar(final byte[] bytes, final int from, final int length) {
+		if (length <= 0) {
+			return false;
+		}
+		return BU.isTChar(bytes, from, length);
 	}
 
 	private static String gHName(final int headerNameLength, final byte[] dataRawArray, final int bytesFrom) {
@@ -689,12 +725,10 @@ public class ZRequest {
 			return HeaderEnum.COOKIE.getName();
 		}
 		if (isUpgrade(headerNameLength, dataRawArray, bytesFrom)) {
-			// FIXME 2026年7月11日 05:59:26 zhangzhen : 新增枚举
-			return "Upgrade";
+			return HeaderEnum.UPGRADE.getName();
 		}
 		if (isExpect(headerNameLength, dataRawArray, bytesFrom)) {
-			// FIXME 2026年7月11日 05:59:26 zhangzhen : 新增枚举
-			return "Expect";
+			return HeaderEnum.UPGRADE.getName();
 		}
 		if (isContentLength(headerNameLength, dataRawArray, bytesFrom)) {
 			return HeaderEnum.CONTENT_LENGTH.getName();
@@ -852,6 +886,11 @@ public class ZRequest {
 			int nameTo = (cI - arrayRange.getFrom());
 			while ((nameTo > 0) && (request.dataRawArray[cI] == STU.SPACE_BYTE)) {
 				nameTo--;
+			}
+
+			if (!isTChar(request.dataRawArray, arrayRange.getFrom(), nameTo)) {
+				response400AndCloseSocketIfNotTChar();
+				return null;
 			}
 
 			final String name = AsciiString.toLowerCaseAsciiByte(request.dataRawArray, arrayRange.getFrom(), nameTo);

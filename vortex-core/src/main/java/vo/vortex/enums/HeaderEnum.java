@@ -25,6 +25,10 @@ public enum HeaderEnum {
 
 	COOKIE("cookie", "cookie".getBytes()),
 
+	UPGRADE("upgrade", "upgrade".getBytes()),
+
+	EXPECT("expect", "expect".getBytes()),
+
 	CONTENT_DISPOSITION("content-disposition", "content-disposition".getBytes()),
 
 	CONTENT_TYPE("content-type", "content-type".getBytes()),

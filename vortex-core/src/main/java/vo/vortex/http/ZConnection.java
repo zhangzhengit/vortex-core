@@ -90,6 +90,7 @@ public class ZConnection {
 
 	public void start() {
 
+		this.pd.setSocket(this.socket);
 		this.pd.setBufferedInputStream(this.bufferedInputStream);
 
 		boolean closed = false;
