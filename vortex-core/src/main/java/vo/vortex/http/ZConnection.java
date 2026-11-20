@@ -8,9 +8,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import vo.vortex.common.ZArray;
 import vo.vortex.configuration.properties.ServerConfigurationProperties;
@@ -18,7 +16,6 @@ import vo.vortex.core.ZContext;
 import vo.vortex.enums.ConnectionEnum;
 import vo.vortex.enums.HeaderEnum;
 import vo.vortex.enums.HttpParseStatusEnum;
-import vo.vortex.enums.HttpStatusEnum;
 import vo.vortex.http.request.HttpRequestScheduler;
 import vo.vortex.http.request.TaskRequestHandler;
 import vo.vortex.http.request.ZRequest;
@@ -90,7 +87,6 @@ public class ZConnection {
 
 	public void start() {
 
-		this.pd.setSocket(this.socket);
 		this.pd.setBufferedInputStream(this.bufferedInputStream);
 
 		boolean closed = false;
@@ -115,8 +111,8 @@ public class ZConnection {
 				}
 
 				this.requestArray.add(this.buffer, 0, read);
-
-				final HttpParseStatusEnum process = ZConnection.requestScheduler.process(parseStatusEnum, this.getPd(), this.requestArray);
+				final HttpParseStatusEnum process = ZConnection.requestScheduler.process(parseStatusEnum, this.getPd(),
+						this.requestArray);
 
 				if (process == HttpParseStatusEnum.START) {
 					response(this.getPd().getRequest(), this.requestArray, this.getPd());

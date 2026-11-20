@@ -1,10 +1,7 @@
 package vo.vortex.http.request;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -24,8 +21,8 @@ import vo.vortex.core.ZContext;
 import vo.vortex.enums.AcceptEncodingEnum;
 import vo.vortex.enums.ConnectionEnum;
 import vo.vortex.enums.HeaderEnum;
+import vo.vortex.exception.HeaderParseException;
 import vo.vortex.http.ArrayRange;
-import vo.vortex.http.PD;
 import vo.vortex.http.TF;
 import vo.vortex.http.Task;
 import vo.vortex.http.ZConnectionTL;
@@ -33,7 +30,6 @@ import vo.vortex.http.ZCookie;
 import vo.vortex.http.ZServer;
 import vo.vortex.http.ZSession;
 import vo.vortex.http.ZSessionMap;
-import vo.vortex.http.response.ReU;
 
 /**
  * 表示http 的请求信息
@@ -96,8 +92,8 @@ public class ZRequest {
 	/**
 	 * 请求方法 byte[]
 	 */
-	private byte[] methodNameBytes;
 
+	private byte[] methodNameBytes;
 	private String methodCache;
 
 	/**
@@ -527,7 +523,7 @@ public class ZRequest {
 		// HTTP1.1必须有 HOST 头
 		final String header = request.getHost();
 		if (STU.isNullOrEmptyOrBlank(header)) {
-			throw new IllegalArgumentException("缺少 " + HeaderEnum.HOST.getName() + " 头");
+			throw new HeaderParseException("缺少 " + HeaderEnum.HOST.getName() + " 头");
 		}
 
 		// parseBody
@@ -628,7 +624,7 @@ public class ZRequest {
 	private static void parseVersion(final String requestLine, final ZRequest request) {
 		final int hI = requestLine.lastIndexOf("HTTP/");
 		if (hI <= -1) {
-			throw new IllegalArgumentException("请求行错误：找不到HTTP版本");
+			throw new HeaderParseException("请求行错误：找不到HTTP版本");
 		}
 		final String version = requestLine.substring(hI);
 		if (!HTTP_11.equalsIgnoreCase(version)) {
@@ -669,8 +665,7 @@ public class ZRequest {
 			final int headerNameLength = cI - arrayRange.getFrom() - nTrimSize;
 
 			if (!isTChar(request.dataRawArray, arrayRange.getFrom(), headerNameLength)) {
-				response400AndCloseSocketIfNotTChar();
-				return;
+				throw new HeaderParseException("请求头name不允许非tChar字符");
 			}
 
 			final String name = gHName(headerNameLength, request.dataRawArray, arrayRange.getFrom());
@@ -687,24 +682,6 @@ public class ZRequest {
 
 		}
 
-	}
-
-	private static void response400AndCloseSocketIfNotTChar() {
-		final PD pd = ZConnectionTL.get().getPd();
-		final Socket socket = pd.getSocket();
-
-		try (OutputStream outputStream = socket.getOutputStream()) {
-			outputStream.write(ReU.g400Bytes());
-			outputStream.flush();
-		} catch (final IOException ingore) {
-			// ingore
-		} finally {
-			try {
-				socket.close();
-			} catch (final IOException ingore) {
-				// ingore
-			}
-		}
 	}
 
 	private static boolean isTChar(final byte[] bytes, final int from, final int length) {
@@ -889,8 +866,7 @@ public class ZRequest {
 			}
 
 			if (!isTChar(request.dataRawArray, arrayRange.getFrom(), nameTo)) {
-				response400AndCloseSocketIfNotTChar();
-				return null;
+				throw new HeaderParseException("请求头name不允许非tChar字符");
 			}
 
 			final String name = AsciiString.toLowerCaseAsciiByte(request.dataRawArray, arrayRange.getFrom(), nameTo);

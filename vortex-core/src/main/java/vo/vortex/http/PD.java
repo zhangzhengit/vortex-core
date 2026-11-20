@@ -1,7 +1,6 @@
 package vo.vortex.http;
 
 import java.io.BufferedInputStream;
-import java.net.Socket;
 
 import vo.vortex.enums.HttpParseStatusEnum;
 import vo.vortex.http.request.ZRequest;
@@ -25,8 +24,6 @@ public class PD {
 	private int searchHeaderEndIndexFromIndex = 0;
 
 	private long contentLength = -1;
-
-	private Socket socket;
 
 	private BufferedInputStream bufferedInputStream;
 
@@ -171,14 +168,6 @@ public class PD {
 
 	public void setSp(final SP sp) {
 		this.sp = sp;
-	}
-
-	public Socket getSocket() {
-		return this.socket;
-	}
-
-	public void setSocket(final Socket socket) {
-		this.socket = socket;
 	}
 
 }

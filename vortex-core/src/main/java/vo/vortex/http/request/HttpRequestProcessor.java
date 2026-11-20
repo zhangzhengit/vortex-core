@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import vo.log.core.ZLog2;
 import vo.vortex.anno.ZComponent;
 import vo.vortex.common.AU;
 import vo.vortex.common.STU;
@@ -13,6 +14,7 @@ import vo.vortex.configuration.properties.ServerConfigurationProperties;
 import vo.vortex.core.ZContext;
 import vo.vortex.enums.HeaderEnum;
 import vo.vortex.enums.HttpParseStatusEnum;
+import vo.vortex.exception.HeaderParseException;
 import vo.vortex.http.PD;
 import vo.vortex.http.TF;
 import vo.vortex.http.Task;
@@ -39,6 +41,8 @@ import vo.vortex.http.response.ZResponse;
 public class HttpRequestProcessor {
 
 	// FIXME 2026年5月30日 16:00:48 zhangzhen : 这个里面所有的search，如果返回-1了 ，可以设置一个当前length A,下次search从A开始，就少做很多重复的无用功
+
+	private static final ZLog2 LOG = ZLog2.getInstance();
 
 	private static final String HTTP = "HTTP/";
 
@@ -295,11 +299,23 @@ public class HttpRequestProcessor {
 	 */
 	public HttpParseStatusEnum end(final PD pd, final ZArray array) {
 
-		final ZRequest request = HttpRequestParser.parse(array.getRawArray(), array.length(), pd.getHeaderEndIndex());
+		try {
+			final ZRequest request = HttpRequestParser.parse(array.getRawArray(), array.length(),
+					pd.getHeaderEndIndex());
+			request.setMethodNameBytes(pd.getMethodNameBytes());
+			pd.setRequest(request);
 
-		request.setMethodNameBytes(pd.getMethodNameBytes());
+		} catch (final Exception e) {
+			LOG.error("请求解析异常", e);
 
-		pd.setRequest(request);
+			if (e instanceof final HeaderParseException e1) {
+				final ZResponse response = ReU.response400(e1.getMessage(), false);
+				pd.setException(response);
+				return HttpParseStatusEnum.EXCEPTION;
+			}
+
+			throw e;
+		}
 
 		return HttpParseStatusEnum.START;
 	}
