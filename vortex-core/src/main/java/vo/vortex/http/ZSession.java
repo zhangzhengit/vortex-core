@@ -19,8 +19,7 @@ import vo.vortex.core.ZContext;
  */
 public class ZSession {
 
-	private static final int sessionTimeout = ZContext.getBean(ServerConfigurationProperties.class)
-			.getSessionTimeout();
+	private static final int sessionTimeout = ZContext.getBean(ServerConfigurationProperties.class).getSessionTimeout();
 
 	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
@@ -65,23 +64,23 @@ public class ZSession {
 	}
 
 	private static String gSessionID() {
-	    final byte[] bytes = new byte[16];
-	    SECURE_RANDOM.nextBytes(bytes);
-	    return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+		final byte[] bytes = new byte[16];
+		SECURE_RANDOM.nextBytes(bytes);
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
 	}
 
 	public long getCreationTime() {
 		this.checkInvalidate();
-    	return this.createTime;
-    }
+		return this.createTime;
+	}
 
 	public String getId() {
 		this.checkInvalidate();
 		return this.id;
 	}
 
-    public long getLastAccessedTime() {
-    	this.checkInvalidate();
+	public long getLastAccessedTime() {
+		this.checkInvalidate();
 		return this.lastAccessedTime;
 	}
 
@@ -96,35 +95,34 @@ public class ZSession {
 		this.intervalSeconds = interval;
 	}
 
-    public int getMaxInactiveInterval() {
-    	this.checkInvalidate();
-    	return this.intervalSeconds;
-    }
+	public int getMaxInactiveInterval() {
+		this.checkInvalidate();
+		return this.intervalSeconds;
+	}
 
-    public void setAttribute(final String name, final Object value) {
+	public void setAttribute(final String name, final Object value) {
 		this.checkInvalidate();
 		if (this.data == null) {
 			this.data = new HashMap<>(2, 1F);
 		}
-    	this.data.put(name, value);
-    }
+		this.data.put(name, value);
+	}
 
-    public Object getAttribute(final String name) {
-    	this.checkInvalidate();
+	public Object getAttribute(final String name) {
+		this.checkInvalidate();
 		if (this.data == null) {
 			return null;
 		}
-    	return this.data.get(name);
-    }
+		return this.data.get(name);
+	}
 
-    public void invalidate() {
-    	ZSessionMap.remove(this.getId());
-    	this.invalidate = true;
-    }
+	public void invalidate() {
+		ZSessionMap.remove(this.getId());
+		this.invalidate = true;
+	}
 
 	private void checkInvalidate() {
 		if (this.invalidate) {
-			// FIXME 2025年12月26日 17:18:14 zhangzhen :  暂时注释，不抛出
 			throw new IllegalArgumentException(ZSession.class.getCanonicalName() + " 已销毁，当前不可用");
 		}
 	}
@@ -179,6 +177,5 @@ public class ZSession {
 		builder.append("]");
 		return builder.toString();
 	}
-
 
 }
