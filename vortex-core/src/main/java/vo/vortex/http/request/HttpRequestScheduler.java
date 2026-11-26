@@ -47,11 +47,9 @@ public class HttpRequestScheduler {
 			return this.start(pd, array);
 
 		default:
-			break;
-
+			return HttpParseStatusEnum.EXCEPTION;
 		}
 
-		return parseStatusEnum;
 	}
 
 	private HttpParseStatusEnum start(final PD pd, final ZArray array) {
