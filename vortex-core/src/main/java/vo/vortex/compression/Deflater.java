@@ -41,7 +41,7 @@ public class Deflater {
 			out.close();
 			deflater.close();
 
-			return new String(out.toByteArray(), DEFAULT_CHARSET).intern();
+			return new String(out.toByteArray(), DEFAULT_CHARSET);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
