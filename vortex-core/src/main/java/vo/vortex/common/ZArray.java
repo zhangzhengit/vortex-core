@@ -64,6 +64,10 @@ public class ZArray {
 	}
 
 	public byte remove(final int index) {
+		if ((index < 0) || (index >= this.size)) {
+			throw new IndexOutOfBoundsException(index);
+		}
+
 		final byte r = this.ar[index];
 		this.ar[index] = 0;
 		for (int i = index; i < (this.size - 1); i++) {
