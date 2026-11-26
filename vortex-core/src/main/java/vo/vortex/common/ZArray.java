@@ -9,6 +9,8 @@ package vo.vortex.common;
  */
 public class ZArray {
 
+	private static final byte[] EMTPY = new byte[0];
+
 	/**
 	 * 存储
 	 */
@@ -95,12 +97,13 @@ public class ZArray {
 	 */
 	public byte[] toByteArray() {
 		if (this.size <= 0) {
-			return new byte[0];
+			return EMTPY;
 		}
 
-		if (this.size == this.ar.length) {
-			return this.ar;
-		}
+		// 这段注释了，全都走arraycopy，避免暴露原始数组
+//		if (this.size == this.ar.length) {
+//			return this.ar;
+//		}
 
 		final byte[] g = new byte[this.size];
 		System.arraycopy(this.ar, 0, g, 0, this.size);
