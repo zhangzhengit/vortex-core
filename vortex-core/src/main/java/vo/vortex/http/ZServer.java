@@ -99,7 +99,7 @@ public class ZServer {
 			serverSocket = new ServerSocket(serverPort);
 		} catch (final IOException e) {
 			LOG.error("启动失败,程序即将退出,serverPort={}", serverPort, e);
-			System.exit(0);
+			System.exit(1);
 		}
 
 		LOG.debug("httpServer启动成功,port={}", serverPort);
