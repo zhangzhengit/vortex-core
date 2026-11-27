@@ -28,14 +28,14 @@ import vo.vortex.http.response.ReU;
  */
 public class ZServer {
 
+	private static final ZLog2 LOG = ZLog2.getInstance();
+
 	public static final int MIN_CORE_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 8;
 
 	/**
 	 * 此值，恢复很久以前的配置项：允许等待的任务个数
 	 */
 	private static final int ABQ_CAPACITY = 100;
-
-	private static final ZLog2 LOG = ZLog2.getInstance();
 
 	private static final ServerConfigurationProperties SERVER_CONFIGURATIONPROPERTIES= ZContext.getBean(ServerConfigurationProperties.class);
 
@@ -108,6 +108,10 @@ public class ZServer {
 
 		while (true) {
 			final Socket socket = ZServer.accept(serverSocket);
+			if (socket == null) {
+				continue;
+			}
+
 			if (ENABLE_VIRTUAL_THREAD) {
 				Thread.ofVirtual().name(gTName()).start(() -> ZServer.newConnection(socket));
 			} else {
@@ -137,16 +141,13 @@ public class ZServer {
 	}
 
 	private static Socket accept(final ServerSocket serverSocket) {
-		Socket socket = null;
 		try {
-			socket = serverSocket.accept();
+			return serverSocket.accept();
 		} catch (final IOException e) {
-			e.printStackTrace();
+			LOG.error("serverSocket.accept异常", e);
+			return null;
 		}
-
-		return socket;
 	}
-
 
 	private static void newConnection(final Socket socket) {
 		if (!CONNECTION_LIMIT_SEMAPHORE.tryAcquire()) {
